@@ -1,6 +1,6 @@
 # Microsoft Office Learning Roadmap
 
-**Live website:** [microsoft-office-pearl.vercel.app](https://microsoft-office-pearl.vercel.app/)
+**Live website:** [microsoft-office-roadmap.vercel.app](https://microsoft-office-roadmap.vercel.app/)
 
 A free, beginner-friendly eight-week roadmap from Dabik Technologies for people starting from zero with computer and office skills. The plan moves from computer basics and typing to Microsoft Word, Excel, PowerPoint, and common workplace tools.
 
