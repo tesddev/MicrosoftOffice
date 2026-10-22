@@ -38,8 +38,14 @@ h1{font-size:clamp(2.2rem,6vw,3.4rem);line-height:1.08;margin:0 0 16px;letter-sp
 .bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--word),var(--excel),var(--ppt));transition:width .3s}
 .meter small{display:block;color:var(--muted);margin-top:8px}
 .meter button{font:inherit;background:none;border:0;color:var(--muted);text-decoration:underline;cursor:pointer;padding:0}
-.phase{--c:var(--basics);margin:44px 0;padding-left:22px;border-left:6px solid var(--c)}
-.phase h2{margin:0;font-size:1.6rem;color:var(--c);line-height:1.2}
+.phase{--c:var(--basics);margin:20px 0;background:var(--surface);border:1px solid var(--line);border-left:6px solid var(--c);border-radius:10px}
+.phase summary{display:flex;align-items:center;gap:12px;padding:18px 20px;cursor:pointer;list-style:none}
+.phase summary::-webkit-details-marker{display:none}
+.phase summary::before{content:"+";width:28px;height:28px;flex:none;display:grid;place-items:center;border:1px solid var(--line);border-radius:50%;color:var(--c);font-weight:700}
+.phase[open] summary::before{content:"−"}
+.phase summary:focus-visible{outline:3px solid var(--ink);outline-offset:3px;border-radius:8px}
+.phase h2{margin:0;font-size:1.4rem;color:var(--c);line-height:1.2}
+.week-content{padding:0 20px 20px 60px}
 .when{color:var(--muted);margin:2px 0 14px}
 .task{display:flex;gap:12px;align-items:flex-start;padding:10px 12px;margin:0 -12px;border-radius:8px;cursor:pointer}
 .task:hover{background:var(--surface)}
@@ -116,37 +122,40 @@ footer{padding:20px 0 60px;color:var(--muted);font-size:.9rem}
 </div>
 
 <script>
-const PHASES=[
- {id:"basics",c:"--basics",t:"Computer basics",w:"Weeks 1 and 2",tasks:[
-  "Type for 15 minutes daily and reach 30 words per minute",
-  "Create, rename, move, copy, delete and search for files and folders",
-  "Save work to a USB drive or cloud storage like OneDrive",
-  "Send, reply to and attach files in email, with a clear subject line",
-  "Learn the shortcuts Ctrl+C, V, X, Z, S and F"],
+const WEEKS=[
+ {c:"--basics",t:"Computer basics",tasks:[
+  ["basics0","Type for 15 minutes daily and reach 30 words per minute"],
+  ["basics1","Create, rename, move, copy, delete and search for files and folders"],
+  ["basics4","Learn the shortcuts Ctrl+C, V, X, Z, S and F"]]},
+ {c:"--basics",t:"Computer basics and Word",tasks:[
+  ["basics2","Save work to a USB drive or cloud storage like OneDrive"],
+  ["basics3","Send, reply to and attach files in email, with a clear subject line"],
+  ["word0","Type and format text: fonts, spacing and alignment"]],
   p:"Email yourself a file, then find and open it from your downloads folder."},
- {id:"word",c:"--word",t:"Microsoft Word",w:"Weeks 2 and 3",tasks:[
-  "Type and format text: fonts, spacing and alignment",
-  "Use bullet points, numbering, headers and page numbers",
-  "Insert tables and images",
-  "Save a document as a PDF"],
+ {c:"--word",t:"Microsoft Word",tasks:[
+  ["word1","Use bullet points, numbering, headers and page numbers"],
+  ["word2","Insert tables and images"],
+  ["word3","Save a document as a PDF"]],
   p:"Write a formal letter and your own CV."},
- {id:"excel",c:"--excel",t:"Microsoft Excel",w:"Weeks 4 and 5. Employers care about this one most.",tasks:[
-  "Understand rows, columns and cells, and format them",
-  "Use SUM, AVERAGE, COUNT, MIN and MAX",
-  "Use IF and VLOOKUP or XLOOKUP",
-  "Sort and filter data",
-  "Make a basic chart"],
+ {c:"--excel",t:"Microsoft Excel",tasks:[
+  ["excel0","Understand rows, columns and cells, and format them"],
+  ["excel1","Use SUM, AVERAGE, COUNT, MIN and MAX"]]},
+ {c:"--excel",t:"Microsoft Excel",tasks:[
+  ["excel2","Use IF and VLOOKUP or XLOOKUP"],
+  ["excel3","Sort and filter data"],
+  ["excel4","Make a basic chart"]],
   p:"Build a monthly budget or an attendance sheet."},
- {id:"ppt",c:"--ppt",t:"PowerPoint",w:"Week 6",tasks:[
-  "Add slides and choose layouts",
-  "Add text and images",
-  "Apply simple transitions"],
+ {c:"--ppt",t:"PowerPoint",tasks:[
+  ["ppt0","Add slides and choose layouts"],
+  ["ppt1","Add text and images"],
+  ["ppt2","Apply simple transitions"]],
   p:"Make a 5-slide presentation about yourself or a topic you know."},
- {id:"tools",c:"--tools",t:"Workplace tools",w:"Weeks 7 and 8",tasks:[
-  "Use Outlook for email and calendar",
-  "Join a call on Teams or Zoom",
-  "Try Google Docs and Sheets, since many companies use both",
-  "Review Word, Excel and PowerPoint together"],
+ {c:"--tools",t:"Workplace tools",tasks:[
+  ["tools0","Use Outlook for email and calendar"],
+  ["tools1","Join a call on Teams or Zoom"]]},
+ {c:"--tools",t:"Workplace tools and review",tasks:[
+  ["tools2","Try Google Docs and Sheets, since many companies use both"],
+  ["tools3","Review Word, Excel and PowerPoint together"]],
   p:"Do one mini project: write a report in Word, put its numbers in Excel, and present it in PowerPoint."}
 ];
 const KEY="office-roadmap-v1";
@@ -155,10 +164,11 @@ try{done=JSON.parse(localStorage.getItem(KEY)||"{}")}catch(e){done={}}
 const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(done))}catch(e){}};
 const root=document.getElementById("roadmap");
 let total=0;
-root.innerHTML=PHASES.map(ph=>{
-  const items=ph.tasks.map((t,i)=>{total++;const id=ph.id+i;
+root.innerHTML=WEEKS.map((week,i)=>{
+  const items=week.tasks.map(([id,t])=>{total++;
     return `<label class="task"><input type="checkbox" data-id="${id}"><span>${t}</span></label>`}).join("");
-  return `<section class="phase" style="--c:var(${ph.c})"><h2>${ph.t}</h2><p class="when">${ph.w}</p>${items}<div class="project"><b>Practice task.</b> ${ph.p}</div></section>`;
+  const practice=week.p?`<div class="project"><b>Practice task.</b> ${week.p}</div>`:"";
+  return `<details class="phase" style="--c:var(${week.c})"${i===0?" open":""}><summary><h2>Week ${i+1}: ${week.t}</h2></summary><div class="week-content">${items}${practice}</div></details>`;
 }).join("");
 const boxes=[...root.querySelectorAll("input")];
 function paint(){
