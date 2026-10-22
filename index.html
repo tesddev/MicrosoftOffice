@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Learn Microsoft Office in 8 weeks | Dabik Technologies</title>
+<meta name="author" content="Dabik Technologies">
+<meta name="description" content="A free, step-by-step roadmap for beginners to learn typing, Word, Excel, PowerPoint and workplace tools.">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📊</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#F2F5F7; --surface:#FFFFFF; --ink:#14212B; --muted:#52616D; --line:#D5DDE3;
+  --basics:#3F4E5A; --word:#2B579A; --excel:#1E6B41; --ppt:#B7391A; --tools:#6B3FA0;
+}
+@media (prefers-color-scheme:dark){
+  :root{--bg:#0F171D; --surface:#17222B; --ink:#E8EEF2; --muted:#9AAAB6; --line:#2B3A46;
+  --basics:#9FB0BD; --word:#7FA7E8; --excel:#5CC08A; --ppt:#F08A6C; --tools:#B895E8}
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);font:18px/1.6 "Atkinson Hyperlegible",system-ui,-apple-system,"Segoe UI",sans-serif}
+.wrap{max-width:760px;margin:0 auto;padding:0 20px}
+header.hero{padding:56px 0 28px}
+h1{font-size:clamp(2.2rem,6vw,3.4rem);line-height:1.08;margin:0 0 16px;letter-spacing:-.02em}
+.by{display:inline-flex;align-items:center;gap:12px;margin:0 0 20px;font-weight:700;color:var(--ink);text-decoration:none}
+.by img{width:48px;height:auto;background:#fff;border-radius:8px;padding:4px;border:1px solid var(--line)}
+.by span{display:block;line-height:1.25}
+.by small{display:block;font-weight:400;color:var(--muted);font-style:italic}
+.by:hover span b{text-decoration:underline}
+.by:focus-visible,footer a:focus-visible{outline:3px solid var(--ink);outline-offset:3px;border-radius:6px}
+.lede{color:var(--muted);max-width:56ch;margin:0 0 28px}
+.meter{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:18px 20px;position:sticky;top:10px;z-index:5}
+.meter-top{display:flex;justify-content:space-between;gap:12px;font-weight:700;margin-bottom:10px}
+.bar{height:12px;background:var(--line);border-radius:6px;overflow:hidden}
+.bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--word),var(--excel),var(--ppt));transition:width .3s}
+.meter small{display:block;color:var(--muted);margin-top:8px}
+.meter button{font:inherit;background:none;border:0;color:var(--muted);text-decoration:underline;cursor:pointer;padding:0}
+.phase{--c:var(--basics);margin:44px 0;padding-left:22px;border-left:6px solid var(--c)}
+.phase h2{margin:0;font-size:1.6rem;color:var(--c);line-height:1.2}
+.when{color:var(--muted);margin:2px 0 14px}
+.task{display:flex;gap:12px;align-items:flex-start;padding:10px 12px;margin:0 -12px;border-radius:8px;cursor:pointer}
+.task:hover{background:var(--surface)}
+.task input{appearance:none;flex:none;width:24px;height:24px;margin-top:3px;border:2px solid var(--c);border-radius:6px;background:var(--surface);cursor:pointer;display:grid;place-content:center}
+.task input:checked{background:var(--c)}
+.task input:checked::after{content:"";width:6px;height:12px;border:solid #fff;border-width:0 3px 3px 0;transform:rotate(45deg) translate(-1px,-1px)}
+.task input:focus-visible{outline:3px solid var(--ink);outline-offset:2px}
+.task input:checked + span{color:var(--muted);text-decoration:line-through}
+.project{margin-top:14px;padding:14px 16px;background:var(--surface);border:1px solid var(--line);border-left:4px solid var(--c);border-radius:8px}
+.project b{color:var(--c)}
+section.plain{margin:56px 0}
+section.plain h2{font-size:1.6rem;margin:0 0 14px}
+.res{display:grid;gap:10px;padding:0;list-style:none;margin:0}
+.res li{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:12px 16px}
+a{color:var(--word)}
+ol.advice{padding-left:1.3em;margin:0}
+ol.advice li{margin:0 0 14px;padding-left:4px}
+.share{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:18px 20px}
+.share p{margin:0 0 14px}
+.share button{font:inherit;font-weight:700;background:var(--word);color:#fff;border:0;border-radius:8px;padding:10px 18px;cursor:pointer}
+.share button:focus-visible{outline:3px solid var(--ink);outline-offset:2px}
+footer{padding:20px 0 60px;color:var(--muted);font-size:.9rem}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}.bar i{transition:none}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header class="hero">
+  <a class="by" href="https://www.dabikgroup.com.ng/" target="_blank" rel="noopener">
+    <img src="logo.png" alt="Dabik Technologies logo" width="160" height="164">
+    <span>By <b>Dabik Technologies</b><small>Solve Smarter</small></span>
+  </a>
+  <h1>Learn Microsoft Office in 8 weeks, starting from zero</h1>
+  <p class="lede">One hour a day. Real tasks, not passive videos. Tick each step as you finish it and your progress is saved on this device.</p>
+  <div class="meter" role="status" aria-live="polite">
+    <div class="meter-top"><span id="count">0 of 0 steps done</span><span id="pct">0%</span></div>
+    <div class="bar"><i id="fill"></i></div>
+    <small>Typing practice first, then Word, Excel and PowerPoint. <button id="reset" type="button">Reset progress</button></small>
+  </div>
+</header>
+
+<main id="roadmap"></main>
+
+<section class="plain">
+  <h2>Free places to learn</h2>
+  <ul class="res">
+    <li><a href="https://support.microsoft.com/training" target="_blank" rel="noopener">Microsoft Training</a> and <a href="https://learn.microsoft.com" target="_blank" rel="noopener">Microsoft Learn</a>: official videos and lessons.</li>
+    <li>YouTube: Kevin Stratvert, Leila Gharani (Excel), and Technology for Teachers and Students.</li>
+    <li><a href="https://edu.gcfglobal.org" target="_blank" rel="noopener">GCFGlobal</a>: beginner lessons with practice exercises.</li>
+    <li><a href="https://www.typingclub.com" target="_blank" rel="noopener">TypingClub</a> or <a href="https://www.keybr.com" target="_blank" rel="noopener">Keybr</a>: free typing practice.</li>
+  </ul>
+</section>
+
+<section class="plain">
+  <h2>Advice for the learner</h2>
+  <ol class="advice">
+    <li><b>Practice every day, even briefly.</b> 45 to 60 minutes daily beats 5 hours once a week.</li>
+    <li><b>Use a real computer.</b> Phone-only practice won't build muscle memory. Borrow one, or use a library or cyber cafe.</li>
+    <li><b>Build small things you can show.</b> A CV, a budget sheet and a short presentation are proof of skill.</li>
+    <li><b>Be honest in interviews.</b> "I'm learning, and here's what I've already built" lands far better than hiding the gap.</li>
+    <li><b>Consider a short certificate</b> once you're comfortable, such as Microsoft Office Specialist (MOS) prep or a local course.</li>
+    <li><b>Don't get discouraged.</b> Basic office skills take weeks, and many people start from zero.</li>
+  </ol>
+</section>
+
+<section class="plain">
+  <h2>Know someone who needs this?</h2>
+  <div class="share">
+    <p>Send them this page. Basic computer skills are very learnable, and being ready to work on them already puts you ahead.</p>
+    <button id="share" type="button">Copy link</button>
+  </div>
+</section>
+<footer>Created by <a href="https://www.dabikgroup.com.ng/" target="_blank" rel="noopener">Dabik Technologies</a>. Free to use and share.</footer>
+</div>
+
+<script>
+const PHASES=[
+ {id:"basics",c:"--basics",t:"Computer basics",w:"Weeks 1 and 2",tasks:[
+  "Type for 15 minutes daily and reach 30 words per minute",
+  "Create, rename, move, copy, delete and search for files and folders",
+  "Save work to a USB drive or cloud storage like OneDrive",
+  "Send, reply to and attach files in email, with a clear subject line",
+  "Learn the shortcuts Ctrl+C, V, X, Z, S and F"],
+  p:"Email yourself a file, then find and open it from your downloads folder."},
+ {id:"word",c:"--word",t:"Microsoft Word",w:"Weeks 2 and 3",tasks:[
+  "Type and format text: fonts, spacing and alignment",
+  "Use bullet points, numbering, headers and page numbers",
+  "Insert tables and images",
+  "Save a document as a PDF"],
+  p:"Write a formal letter and your own CV."},
+ {id:"excel",c:"--excel",t:"Microsoft Excel",w:"Weeks 4 and 5. Employers care about this one most.",tasks:[
+  "Understand rows, columns and cells, and format them",
+  "Use SUM, AVERAGE, COUNT, MIN and MAX",
+  "Use IF and VLOOKUP or XLOOKUP",
+  "Sort and filter data",
+  "Make a basic chart"],
+  p:"Build a monthly budget or an attendance sheet."},
+ {id:"ppt",c:"--ppt",t:"PowerPoint",w:"Week 6",tasks:[
+  "Add slides and choose layouts",
+  "Add text and images",
+  "Apply simple transitions"],
+  p:"Make a 5-slide presentation about yourself or a topic you know."},
+ {id:"tools",c:"--tools",t:"Workplace tools",w:"Weeks 7 and 8",tasks:[
+  "Use Outlook for email and calendar",
+  "Join a call on Teams or Zoom",
+  "Try Google Docs and Sheets, since many companies use both",
+  "Review Word, Excel and PowerPoint together"],
+  p:"Do one mini project: write a report in Word, put its numbers in Excel, and present it in PowerPoint."}
+];
+const KEY="office-roadmap-v1";
+let done={};
+try{done=JSON.parse(localStorage.getItem(KEY)||"{}")}catch(e){done={}}
+const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(done))}catch(e){}};
+const root=document.getElementById("roadmap");
+let total=0;
+root.innerHTML=PHASES.map(ph=>{
+  const items=ph.tasks.map((t,i)=>{total++;const id=ph.id+i;
+    return `<label class="task"><input type="checkbox" data-id="${id}"><span>${t}</span></label>`}).join("");
+  return `<section class="phase" style="--c:var(${ph.c})"><h2>${ph.t}</h2><p class="when">${ph.w}</p>${items}<div class="project"><b>Practice task.</b> ${ph.p}</div></section>`;
+}).join("");
+const boxes=[...root.querySelectorAll("input")];
+function paint(){
+  const n=boxes.filter(b=>b.checked).length, p=Math.round(n/total*100);
+  document.getElementById("count").textContent=`${n} of ${total} steps done`;
+  document.getElementById("pct").textContent=p+"%";
+  document.getElementById("fill").style.width=p+"%";
+}
+boxes.forEach(b=>{b.checked=!!done[b.dataset.id];
+  b.addEventListener("change",()=>{done[b.dataset.id]=b.checked;save();paint()})});
+document.getElementById("reset").addEventListener("click",()=>{
+  if(confirm("Clear all ticked steps?")){done={};save();boxes.forEach(b=>b.checked=false);paint()}});
+document.getElementById("share").addEventListener("click",async e=>{
+  const b=e.target,url=location.href;
+  try{await navigator.clipboard.writeText(url);b.textContent="Link copied"}catch(err){b.textContent="Copy the address bar link"}
+  setTimeout(()=>b.textContent="Copy link",2000)});
+paint();
+</script>
+</body>
+</html>
