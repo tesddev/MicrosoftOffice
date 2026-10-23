@@ -1,0 +1,24 @@
+{
+  "name": "microsoft-office-roadmap",
+  "version": "1.0.0",
+  "description": "A free, beginner-friendly eight-week roadmap from Dabik Technologies for people starting from zero with computer and office skills.",
+  "main": "index.html",
+  "scripts": {
+    "dev": "python3 -m http.server 8080",
+    "test": "echo \"No tests specified\" && exit 0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tesddev/MicrosoftOffice.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/tesddev/MicrosoftOffice/issues"
+  },
+  "homepage": "https://github.com/tesddev/MicrosoftOffice#readme",
+  "dependencies": {
+    "@vercel/analytics": "^2.0.1"
+  }
+}
