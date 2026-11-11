@@ -1,13 +1,26 @@
-# Microsoft Office Learning Roadmap
+# Free online assessment: setup
 
-**Live website:** [microsoft-office-roadmap.vercel.app](https://microsoft-office-roadmap.vercel.app/)
+Layout (your existing site moves into /public; nothing else about it changes):
 
-A free, beginner-friendly eight-week roadmap from Dabik Technologies for people starting from zero with computer and office skills. The plan moves from computer basics and typing to Microsoft Word, Excel, PowerPoint, and common workplace tools.
+    api/start.js, api/submit.js, api/verify.js   serverless routes
+    lib/token.js, lib/exam.js                    signing + exam settings
+    data/questions.json                          question bank (server only, never served)
+    public/                                      everything the site serves
+      index.html (and your other existing files)
+      exam.html, verify.html                     new pages
+    scripts/migrate-to-public.js                 moves the old site into public/, records old URLs
+    scripts/merge-vercel-json.js                 creates or merges vercel.json
+    scripts/check-urls.js                        checks every old URL still answers 200
+    scripts/smoke-test.js                        local tests: node scripts/smoke-test.js
+    migration/old-paths.txt                      URLs the site served before this change
 
-The roadmap is organized into eight collapsible weekly sections, from computer basics and typing through Microsoft Word, Excel, PowerPoint, and workplace tools. Each section contains practical steps, with projects to help apply new skills.
+Rollout (production stays untouched until step 6):
 
-Visitors can check off completed steps, see their overall progress, and return later to find their progress saved in the same browser on the same device. A reset option clears saved progress, and a share button makes it easy to send the roadmap to someone else.
-
-## Website Preview
-
-![Screenshot of the Microsoft Office Learning Roadmap website](assets/website.png)
+1. Commit on the feature branch and push it. Vercel builds a Preview deployment.
+2. Vercel > Project > Settings > Environment Variables: add CERT_SECRET for Preview and Production.
+   Generate one with: node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
+3. node scripts/check-urls.js https://<preview-url>   must print "All N URLs OK".
+4. On the preview, open /data/questions.json and /lib/token.js (both must be 404), then take the exam.
+5. Replace https://YOUR-DABIK-SITE/verify in public/verify.html and link /exam.html from the roadmap.
+6. Merge to main. Run check-urls.js against the production URL.
+7. If anything is wrong: Vercel > Deployments > previous deployment > Instant Rollback.

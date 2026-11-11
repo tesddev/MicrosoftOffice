@@ -1,0 +1,6 @@
+[
+  { "id": "x1", "section": "excel", "q": "You want C10 to show the total of B2 to B9 and update when the numbers change. Which formula do you enter?", "options": ["=B2+B9", "=SUM(B2:B9)", "=TOTAL(B2:B9)", "=ADD(B2,B9)"], "answer": 1 },
+  { "id": "x2", "section": "excel", "q": "Which keyboard shortcut saves the current workbook in Excel?", "options": ["Ctrl+P", "Ctrl+S", "Ctrl+Z", "Ctrl+F"], "answer": 1 },
+  { "id": "w1", "section": "word", "q": "Which feature builds an automatic table of contents in Word?", "options": ["Heading styles plus References > Table of Contents", "Typing the page numbers by hand", "Insert > Text Box", "Review > Track Changes"], "answer": 0 },
+  { "id": "p1", "section": "powerpoint", "q": "Where do you add text that only the presenter sees while presenting?", "options": ["Slide master", "Speaker notes", "Comments pane", "Alt text"], "answer": 1 }
+]

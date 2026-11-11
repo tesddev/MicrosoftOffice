@@ -1,0 +1,159 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Microsoft Office online assessment</title>
+<style>
+  :root { --bg:#fbfaf7; --fg:#1b1f24; --muted:#5d6672; --line:#d9d6cd; --accent:#0f4c81; --accent-fg:#fff; --bad:#a32020; }
+  @media (prefers-color-scheme: dark) {
+    :root { --bg:#15181c; --fg:#ecebe6; --muted:#9aa3ad; --line:#2d333b; --accent:#6fa8dc; --accent-fg:#0d1620; --bad:#ff8a8a; }
+  }
+  * { box-sizing: border-box; }
+  body { margin:0; background:var(--bg); color:var(--fg); font:17px/1.55 Georgia, "Times New Roman", serif; }
+  main { max-width:640px; margin:0 auto; padding:32px 18px 80px; }
+  h1 { font-size:1.9rem; line-height:1.2; margin:0 0 8px; }
+  p.lead { color:var(--muted); margin:0 0 24px; }
+  input[type=text] { width:100%; padding:12px; font:inherit; border:1px solid var(--line); border-radius:6px; background:transparent; color:inherit; }
+  button { font:inherit; font-weight:600; padding:12px 22px; border:0; border-radius:6px; background:var(--accent); color:var(--accent-fg); cursor:pointer; }
+  button:disabled { opacity:.45; cursor:not-allowed; }
+  button:focus-visible, input:focus-visible { outline:3px solid var(--accent); outline-offset:2px; }
+  .q { border-top:1px solid var(--line); padding:18px 0; }
+  .q p { margin:0 0 10px; font-weight:600; }
+  label.opt { display:flex; gap:10px; align-items:flex-start; padding:9px 12px; margin:6px 0; border:1px solid var(--line); border-radius:6px; cursor:pointer; }
+  label.opt:has(input:checked) { border-color:var(--accent); background:color-mix(in srgb, var(--accent) 10%, transparent); }
+  #timer { position:sticky; top:0; z-index:2; background:var(--bg); border-bottom:1px solid var(--line); padding:10px 0; font-weight:700; font-variant-numeric:tabular-nums; }
+  .check { display:flex; gap:10px; margin:14px 0 18px; color:var(--muted); font-size:.95rem; }
+  .err { color:var(--bad); min-height:1.5em; margin-top:10px; }
+  .hidden { display:none; }
+  .actions { display:flex; gap:12px; flex-wrap:wrap; margin-top:18px; }
+  a { color:var(--accent); }
+</style>
+</head>
+<body>
+<main>
+  <section id="intro">
+    <h1>Microsoft Office online assessment</h1>
+    <p class="lead">Questions on Word, Excel and PowerPoint. You have 25 minutes and need 70% to pass. This is an unsupervised assessment run by Dabik Technologies.</p>
+    <label for="name">Full name, exactly as it should appear on your certificate</label>
+    <input id="name" type="text" maxlength="60" autocomplete="name">
+    <label class="check"><input id="confirm" type="checkbox"> I confirm my name is spelled correctly. It cannot be changed after I start.</label>
+    <button id="start" disabled>Start the assessment</button>
+    <div id="err" class="err" role="alert"></div>
+  </section>
+
+  <section id="exam" class="hidden">
+    <div id="timer"></div>
+    <div id="questions"></div>
+    <div class="actions"><button id="submit">Submit answers</button></div>
+  </section>
+
+  <section id="result" class="hidden">
+    <h1 id="msg"></h1>
+    <p id="sub" class="lead"></p>
+    <div class="actions">
+      <button id="download" class="hidden">Download certificate (PDF)</button>
+      <button id="retry" class="hidden" onclick="location.reload()">Try again</button>
+    </div>
+    <p id="vlink" class="lead hidden"></p>
+  </section>
+</main>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js"></script>
+<script>
+const $ = (id) => document.getElementById(id);
+let attempt, questions, answers, deadline, tick, submitting = false;
+
+const refresh = () => { $("start").disabled = !($("confirm").checked && $("name").value.trim().length >= 2); };
+$("name").oninput = refresh; $("confirm").onchange = refresh;
+
+$("start").onclick = async () => {
+  $("err").textContent = ""; $("start").disabled = true;
+  try {
+    const r = await fetch("/api/start", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ name: $("name").value }) });
+    const d = await r.json();
+    if (!r.ok) { $("err").textContent = d.error || "Could not start. Try again."; refresh(); return; }
+    attempt = d.attempt; questions = d.questions;
+    answers = new Array(questions.length).fill(null);
+    deadline = Date.now() + d.limitSec * 1000;
+    renderQuestions();
+    $("intro").classList.add("hidden"); $("exam").classList.remove("hidden");
+    tick = setInterval(updateTimer, 500); updateTimer();
+  } catch { $("err").textContent = "No connection. Check your network and try again."; refresh(); }
+};
+
+function renderQuestions() {
+  const box = $("questions"); box.innerHTML = "";
+  questions.forEach((q, i) => {
+    const wrap = document.createElement("div"); wrap.className = "q";
+    const p = document.createElement("p"); p.textContent = (i + 1) + ". " + q.q; wrap.appendChild(p);
+    q.options.forEach((text, j) => {
+      const l = document.createElement("label"); l.className = "opt";
+      const r = document.createElement("input"); r.type = "radio"; r.name = "q" + i;
+      r.onchange = () => { answers[i] = j; };
+      const s = document.createElement("span"); s.textContent = text;
+      l.append(r, s); wrap.appendChild(l);
+    });
+    box.appendChild(wrap);
+  });
+}
+
+function updateTimer() {
+  const left = Math.max(0, Math.round((deadline - Date.now()) / 1000));
+  $("timer").textContent = "Time left " + Math.floor(left / 60) + ":" + String(left % 60).padStart(2, "0");
+  if (left === 0) submit();
+}
+
+$("submit").onclick = submit;
+async function submit() {
+  if (submitting) return; submitting = true; $("submit").disabled = true;
+  try {
+    const r = await fetch("/api/submit", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ attempt, answers }) });
+    const d = await r.json();
+    clearInterval(tick);
+    $("exam").classList.add("hidden"); $("result").classList.remove("hidden");
+    if (!r.ok) { $("msg").textContent = "This attempt could not be scored"; $("sub").textContent = d.error || ""; $("retry").classList.remove("hidden"); return; }
+    if (!d.passed) { $("msg").textContent = "You scored " + d.score + "%"; $("sub").textContent = "The pass mark is " + d.pass + "%. Review the Office roadmap and try again."; $("retry").classList.remove("hidden"); return; }
+    $("msg").textContent = "You passed with " + d.score + "%";
+    $("sub").textContent = "Download your certificate now. Keep the link below to verify it later.";
+    $("download").classList.remove("hidden"); $("download").onclick = () => makePdf(d);
+    const url = location.origin + "/verify/" + d.cert;
+    const a = document.createElement("a"); a.href = url; a.textContent = "Your verification link";
+    $("vlink").append(a); $("vlink").classList.remove("hidden");
+  } catch { submitting = false; $("submit").disabled = false; alert("No connection. Your answers are still on this page. Try submitting again."); }
+}
+
+function makePdf(d) {
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF({ orientation: "landscape", unit: "pt", format: "a4" });
+  const W = 842, H = 595, C = { align: "center" };
+  const url = location.origin + "/verify/" + d.cert;
+
+  doc.setDrawColor(15, 76, 129); doc.setLineWidth(2.5); doc.rect(26, 26, W - 52, H - 52);
+  doc.setLineWidth(0.6); doc.rect(34, 34, W - 68, H - 68);
+
+  doc.setTextColor(27, 31, 36);
+  doc.setFont("times", "bold"); doc.setFontSize(34); doc.text("Certificate of Completion", W / 2, 120, C);
+  doc.setFont("times", "normal"); doc.setFontSize(15); doc.text("This certifies that", W / 2, 172, C);
+  doc.setFont("times", "bold"); doc.setFontSize(38); doc.text(d.name, W / 2, 232, C);
+  doc.setFont("times", "normal"); doc.setFontSize(15);
+  doc.text("passed the Microsoft Office Online Assessment with a score of " + d.score + "%.", W / 2, 278, C);
+  doc.setFontSize(12); doc.setTextColor(93, 102, 114);
+  doc.text("Unsupervised online assessment. Name as entered by the candidate.", W / 2, 306, C);
+  doc.text("Issued " + d.date + " by Dabik Technologies", W / 2, 326, C);
+
+  const qr = qrcode(0, "M"); qr.addData(url); qr.make();
+  const n = qr.getModuleCount(), size = 130, m = size / n, x0 = 70, y0 = H - 70 - size;
+  doc.setFillColor(0, 0, 0);
+  for (let r = 0; r < n; r++) for (let c = 0; c < n; c++) if (qr.isDark(r, c)) doc.rect(x0 + c * m, y0 + r * m, m + 0.2, m + 0.2, "F");
+
+  doc.setFontSize(12); doc.setTextColor(27, 31, 36);
+  doc.text("Certificate ID " + d.id, x0 + size + 18, y0 + size - 34);
+  doc.setTextColor(15, 76, 129);
+  doc.textWithLink("Scan the code or click here to verify", x0 + size + 18, y0 + size - 14, { url });
+  doc.save("Office-Assessment-Certificate.pdf");
+}
+</script>
+</body>
+</html>
