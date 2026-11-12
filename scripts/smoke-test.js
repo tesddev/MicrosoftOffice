@@ -86,6 +86,21 @@ try {
   v = mkRes();
   verify({ query: { t: attempt } }, v);
   assert.strictEqual(v.code, 404, "attempt token rejected as certificate");
+  // 10. Malformed or missing tokens get a 400, and a broken server config gets a 500
+  v = mkRes();
+  verify({ query: { t: "abc" } }, v);
+  assert.strictEqual(v.code, 400, "malformed token rejected");
+  assert.strictEqual(v.body.reason, "malformed");
+  v = mkRes();
+  verify({ query: {} }, v);
+  assert.strictEqual(v.code, 400, "missing token rejected");
+  const savedSecret = process.env.CERT_SECRET;
+  process.env.CERT_SECRET = "short";
+  v = mkRes();
+  verify({ query: { t: cert } }, v);
+  process.env.CERT_SECRET = savedSecret;
+  assert.strictEqual(v.code, 500, "missing or weak secret gives 500");
+  assert.strictEqual(v.body.reason, "server");
 } finally {
   Date.now = realNow;
 }
