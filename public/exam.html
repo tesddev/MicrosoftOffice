@@ -117,42 +117,247 @@ async function submit() {
     if (!d.passed) { $("msg").textContent = "You scored " + d.score + "%"; $("sub").textContent = "The pass mark is " + d.pass + "%. Review the Office roadmap and try again."; $("retry").classList.remove("hidden"); return; }
     $("msg").textContent = "You passed with " + d.score + "%";
     $("sub").textContent = "Download your certificate now. Keep the link below to verify it later.";
-    $("download").classList.remove("hidden"); $("download").onclick = () => makePdf(d);
+    $("download").classList.remove("hidden");
+    $("download").onclick = () => makePdf(d).catch((error) => {
+      console.error("Certificate PDF generation failed:", error);
+      alert("Could not create the certificate PDF. Please try again.");
+    });
     const url = location.origin + "/verify/" + d.cert;
     const a = document.createElement("a"); a.href = url; a.textContent = "Your verification link";
     $("vlink").append(a); $("vlink").classList.remove("hidden");
   } catch { submitting = false; $("submit").disabled = false; alert("No connection. Your answers are still on this page. Try submitting again."); }
 }
 
-function makePdf(d) {
+async function makePdf(d) {
   const { jsPDF } = window.jspdf;
   const doc = new jsPDF({ orientation: "landscape", unit: "pt", format: "a4" });
   const W = 842, H = 595, C = { align: "center" };
   const url = location.origin + "/verify/" + d.cert;
+  const logo = await loadCertificateLogo();
+  const palette = {
+    ink: [27, 42, 55], muted: [91, 109, 121], blue: [34, 93, 145],
+    teal: [39, 139, 143], paleBlue: [235, 245, 250], paleTeal: [227, 244, 241],
+    gold: [190, 143, 44], paleGold: [250, 242, 217], white: [255, 255, 255],
+  };
+  const center = W / 2;
+  const textFit = (text, maxWidth, startSize, minSize) => {
+    let size = startSize;
+    doc.setFontSize(size);
+    while (doc.getTextWidth(text) > maxWidth && size > minSize) {
+      doc.setFontSize(--size);
+    }
+    return size;
+  };
+  const drawStar = (x, y, outer, inner) => {
+    const points = [];
+    for (let i = 0; i < 10; i++) {
+      const radius = i % 2 === 0 ? outer : inner;
+      const angle = -Math.PI / 2 + i * Math.PI / 5;
+      points.push([x + Math.cos(angle) * radius, y + Math.sin(angle) * radius]);
+    }
+    doc.lines(
+      points.slice(1).map((point, i) => [point[0] - points[i][0], point[1] - points[i][1]]),
+      points[0][0], points[0][1], [1, 1], "F", true
+    );
+  };
+  const formatIssuedDate = (value) => {
+    const date = new Date(String(value) + "T00:00:00Z");
+    return Number.isNaN(date.getTime())
+      ? String(value)
+      : date.toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric", timeZone: "UTC" });
+  };
 
-  doc.setDrawColor(15, 76, 129); doc.setLineWidth(2.5); doc.rect(26, 26, W - 52, H - 52);
-  doc.setLineWidth(0.6); doc.rect(34, 34, W - 68, H - 68);
+  const gradientSteps = 100;
+  for (let i = 0; i < gradientSteps; i++) {
+    const t = i / (gradientSteps - 1);
+    doc.setFillColor(
+      Math.round(248 + (231 - 248) * t),
+      Math.round(251 + (246 - 251) * t),
+      Math.round(253 + (244 - 253) * t)
+    );
+    doc.rect(0, i * H / gradientSteps, W, H / gradientSteps + 0.5, "F");
+  }
+  doc.setFillColor(...palette.paleTeal);
+  doc.triangle(0, 0, 164, 0, 0, 116, "F");
+  doc.triangle(W, H, W - 154, H, W, H - 110, "F");
+  doc.setFillColor(241, 248, 249);
+  doc.circle(W - 52, 126, 62, "F");
+  doc.circle(52, H - 54, 46, "F");
 
-  doc.setTextColor(27, 31, 36);
-  doc.setFont("times", "bold"); doc.setFontSize(34); doc.text("Certificate of Completion", W / 2, 120, C);
-  doc.setFont("times", "normal"); doc.setFontSize(15); doc.text("This certifies that", W / 2, 172, C);
-  doc.setFont("times", "bold"); doc.setFontSize(38); doc.text(d.name, W / 2, 232, C);
-  doc.setFont("times", "normal"); doc.setFontSize(15);
-  doc.text("passed the Microsoft Office Online Assessment with a score of " + d.score + "%.", W / 2, 278, C);
-  doc.setFontSize(12); doc.setTextColor(93, 102, 114);
-  doc.text("Unsupervised online assessment. Name as entered by the candidate.", W / 2, 306, C);
-  doc.text("Issued " + d.date + " by Dabik Technologies", W / 2, 326, C);
+  doc.setDrawColor(...palette.blue);
+  doc.setLineWidth(2);
+  doc.rect(24, 24, W - 48, H - 48);
+  doc.setDrawColor(...palette.teal);
+  doc.setLineWidth(0.7);
+  doc.rect(32, 32, W - 64, H - 64);
+  doc.setDrawColor(...palette.blue);
+  doc.setLineWidth(0.6);
+  doc.line(64, 124, W - 64, 124);
 
-  const qr = qrcode(0, "M"); qr.addData(url); qr.make();
-  const n = qr.getModuleCount(), size = 130, m = size / n, x0 = 70, y0 = H - 70 - size;
-  doc.setFillColor(0, 0, 0);
-  for (let r = 0; r < n; r++) for (let c = 0; c < n; c++) if (qr.isDark(r, c)) doc.rect(x0 + c * m, y0 + r * m, m + 0.2, m + 0.2, "F");
+  doc.addImage(logo, "PNG", 58, 48, 62, 62);
+  doc.setTextColor(...palette.ink);
+  doc.setFont("times", "bold");
+  doc.setFontSize(15);
+  doc.text("Dabik Technologies", 132, 74);
+  doc.setFont("times", "italic");
+  doc.setFontSize(10);
+  doc.setTextColor(...palette.muted);
+  doc.text("Solve Smarter", 132, 92);
 
-  doc.setFontSize(12); doc.setTextColor(27, 31, 36);
-  doc.text("Certificate ID " + d.id, x0 + size + 18, y0 + size - 34);
-  doc.setTextColor(15, 76, 129);
-  doc.textWithLink("Scan the code or click here to verify", x0 + size + 18, y0 + size - 14, { url });
+  const officeIcons = [
+    { letter: "W", color: [43, 87, 154] },
+    { letter: "X", color: [30, 107, 65] },
+    { letter: "P", color: [183, 57, 26] },
+  ];
+  officeIcons.forEach((icon, index) => {
+    const x = 686 + index * 36;
+    doc.setFillColor(...icon.color);
+    doc.roundedRect(x, 58, 27, 27, 4, 4, "F");
+    doc.setTextColor(...palette.white);
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(15);
+    doc.text(icon.letter, x + 13.5, 76, { align: "center" });
+  });
+  doc.setFont("helvetica", "normal");
+  doc.setFontSize(7);
+  doc.setTextColor(...palette.muted);
+  doc.text("WORD       EXCEL     POWERPOINT", 699, 98, { align: "center" });
+
+  doc.setTextColor(...palette.blue);
+  doc.setFont("times", "bold");
+  doc.setFontSize(31);
+  doc.text("Certificate of Completion", center, 166, C);
+  doc.setDrawColor(...palette.teal);
+  doc.setLineWidth(1.2);
+  doc.line(center - 75, 181, center + 75, 181);
+
+  doc.setTextColor(...palette.muted);
+  doc.setFont("times", "normal");
+  doc.setFontSize(14);
+  doc.text("This certifies that", center, 211, C);
+
+  const candidateName = String(d.name);
+  doc.setTextColor(...palette.ink);
+  doc.setFont("times", "bold");
+  doc.setFontSize(42);
+  textFit(candidateName, W - 210, 42, 25);
+  doc.text(candidateName, center, 260, C);
+
+  doc.setFont("times", "normal");
+  doc.setFontSize(15);
+  doc.setTextColor(...palette.ink);
+  doc.text("passed the Microsoft Office Online Assessment", center, 294, C);
+  doc.setFillColor(...palette.paleTeal);
+  doc.setDrawColor(185, 222, 216);
+  doc.roundedRect(center - 76, 307, 152, 43, 10, 10, "FD");
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(10);
+  doc.setTextColor(...palette.teal);
+  doc.text("ASSESSMENT SCORE", center, 322, C);
+  doc.setFontSize(19);
+  doc.setTextColor(...palette.ink);
+  doc.text(String(d.score) + "%", center, 342, C);
+
+  doc.setFont("times", "italic");
+  doc.setFontSize(11);
+  doc.setTextColor(...palette.muted);
+  doc.text("Unsupervised online assessment. Name as entered by the candidate.", center, 371, C);
+  doc.setFont("times", "normal");
+  doc.setFontSize(12);
+  doc.setTextColor(...palette.ink);
+  doc.text("Issued " + formatIssuedDate(d.date) + " by Dabik Technologies", center, 394, C);
+
+  doc.setDrawColor(198, 215, 222);
+  doc.setLineWidth(0.6);
+  doc.line(64, 416, W - 64, 416);
+
+  const qr = qrcode(0, "M");
+  qr.addData(url);
+  qr.make();
+  const moduleCount = qr.getModuleCount();
+  const qrSize = 94;
+  const moduleSize = qrSize / moduleCount;
+  const qrX = 66;
+  const qrY = 438;
+  doc.setFillColor(...palette.white);
+  doc.roundedRect(qrX - 5, qrY - 5, qrSize + 10, qrSize + 10, 4, 4, "F");
+  doc.setFillColor(...palette.ink);
+  for (let row = 0; row < moduleCount; row++) {
+    for (let col = 0; col < moduleCount; col++) {
+      if (qr.isDark(row, col)) {
+        doc.rect(qrX + col * moduleSize, qrY + row * moduleSize, moduleSize + 0.15, moduleSize + 0.15, "F");
+      }
+    }
+  }
+  doc.link(qrX - 5, qrY - 5, qrSize + 10, qrSize + 10, { url });
+
+  doc.setTextColor(...palette.muted);
+  doc.setFont("helvetica", "normal");
+  doc.setFontSize(9);
+  doc.text("SCAN TO VERIFY", 180, 458);
+  doc.setTextColor(...palette.ink);
+  doc.setFont("courier", "bold");
+  doc.setFontSize(11);
+  doc.text("Certificate ID", 180, 478);
+  doc.setFontSize(13);
+  doc.text(String(d.id), 180, 499);
+  doc.setTextColor(...palette.blue);
+  doc.setFont("helvetica", "normal");
+  doc.setFontSize(9);
+  doc.textWithLink("Open certificate verification", 180, 519, { url });
+
+  const signX = 490;
+  const signW = 158;
+  doc.setDrawColor(...palette.teal);
+  doc.setLineWidth(0.9);
+  doc.line(signX, 486, signX + signW, 486);
+  doc.setTextColor(...palette.ink);
+  doc.setFont("times", "bold");
+  doc.setFontSize(13);
+  doc.text("Dabik Technologies", signX + signW / 2, 506, C);
+  doc.setFont("times", "normal");
+  doc.setFontSize(9);
+  doc.setTextColor(...palette.muted);
+  doc.text("Assessment Issuer", signX + signW / 2, 522, C);
+
+  const sealX = 744;
+  const sealY = 484;
+  doc.setFillColor(...palette.paleGold);
+  doc.setDrawColor(...palette.gold);
+  doc.setLineWidth(1.8);
+  doc.circle(sealX, sealY, 43, "FD");
+  doc.setLineWidth(0.7);
+  doc.circle(sealX, sealY, 37, "S");
+  doc.setFillColor(...palette.gold);
+  drawStar(sealX, sealY - 19, 5, 2.3);
+  drawStar(sealX - 17, sealY - 16, 3.2, 1.5);
+  drawStar(sealX + 17, sealY - 16, 3.2, 1.5);
+  doc.setTextColor(119, 83, 20);
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(7.5);
+  doc.text("COURSE", sealX, sealY + 1, C);
+  doc.text("COMPLETED", sealX, sealY + 11, C);
+  drawStar(sealX - 8, sealY + 22, 2.5, 1.2);
+  drawStar(sealX, sealY + 23, 2.5, 1.2);
+  drawStar(sealX + 8, sealY + 22, 2.5, 1.2);
   doc.save("Office-Assessment-Certificate.pdf");
+}
+
+function loadCertificateLogo() {
+  return new Promise((resolve, reject) => {
+    const image = new Image();
+    image.onload = () => {
+      const canvas = document.createElement("canvas");
+      canvas.width = image.naturalWidth;
+      canvas.height = image.naturalHeight;
+      const context = canvas.getContext("2d");
+      if (!context) { reject(new Error("Could not prepare the certificate logo.")); return; }
+      context.drawImage(image, 0, 0);
+      resolve(canvas.toDataURL("image/png"));
+    };
+    image.onerror = () => reject(new Error("Could not load the certificate logo."));
+    image.src = new URL("/assets/logo.png", location.origin).href;
+  });
 }
 </script>
 </body>
