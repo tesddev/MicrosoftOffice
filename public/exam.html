@@ -60,6 +60,7 @@
   .cert-score { position:absolute; top:51.6%; left:50%; display:flex; width:18%; min-width:76px; height:7.2%; flex-direction:column; align-items:center; justify-content:center; gap:1px; margin:0; padding:2px; transform:translateX(-50%); border:1px solid #b9ded8; border-radius:10px; background:#e3f4f1; font:700 clamp(6px, 1.2cqw, 10px)/1.2 Arial,sans-serif; }
   .cert-score strong { color:var(--cert-ink); font-size:1.9em; line-height:1; }
   .cert-date { position:absolute; top:63.5%; left:8%; width:84%; margin:0; transform:translateY(-50%); color:var(--cert-muted); font-size:clamp(7px, 1.4cqw, 12px); }
+  .cert-supervision { position:absolute; top:67%; left:8%; width:84%; margin:0; transform:translateY(-50%); color:var(--cert-muted); font-size:clamp(5px, 1.1cqw, 9px); line-height:1.1; }
   .cert-side { position:absolute; top:70%; right:7.6%; bottom:6%; left:7.6%; display:block; padding-top:0; border-top:1px solid #c6d7de; text-align:center; }
   .cert-seal { position:absolute; right:0; bottom:0; display:grid; width:10.3%; aspect-ratio:1; place-content:center; border:2px double var(--cert-gold); border-radius:50%; background:#faf2d9; color:#775314; font:700 clamp(5px, .9cqw, 8px)/1.3 Arial,sans-serif; }
   .cert-seal span:first-child::before,.cert-seal span:last-child::after { content:"★"; display:block; font-size:1.15em; }
@@ -125,6 +126,7 @@
         <p class="cert-assessment">passed the Microsoft Office Online Assessment</p>
         <p id="cert-score" class="cert-score"><span>ASSESSMENT SCORE</span><strong id="cert-score-value"></strong></p>
         <p id="cert-date" class="cert-date"></p>
+        <p class="cert-supervision">Unsupervised online assessment.</p>
       </div>
       <div class="office-marks" aria-hidden="true"><span>W</span><span>X</span><span>P</span></div>
       <aside class="cert-side">
@@ -380,6 +382,10 @@ async function makePdf(d) {
   doc.setFontSize(12);
   doc.setTextColor(...palette.ink);
   doc.text("Issued " + formatIssuedDate(d.date) + " by Dabik Technologies", center, 378, C);
+  doc.setFont("helvetica", "normal");
+  doc.setFontSize(9);
+  doc.setTextColor(...palette.muted);
+  doc.text("Unsupervised online assessment.", center, 398, C);
 
   doc.setDrawColor(198, 215, 222);
   doc.setLineWidth(0.6);
