@@ -41,41 +41,44 @@
   .actions { display:flex; gap:12px; flex-wrap:wrap; align-items:center; margin-top:18px; }
   a { color:var(--accent); }
   #vlink { margin:14px 0 0; overflow-wrap:anywhere; }
-  .certificate { --cert-ink:#1b2a37; --cert-muted:#5b6d79; --cert-blue:#245d91; --cert-teal:#278b8f; --cert-gold:#be8f2c; position:relative; isolation:isolate; display:grid; grid-template-columns:minmax(0,1fr) auto; gap:clamp(8px, 2vw, 20px); width:100%; min-width:0; aspect-ratio:842 / 595; margin:24px 0; padding:clamp(14px, 3.5vw, 32px); overflow:hidden; color:var(--cert-ink); background:linear-gradient(135deg,#f8fbfd 0%,#edf6f8 58%,#e7f4f2 100%); border:2px solid var(--cert-blue); box-shadow:inset 0 0 0 5px #fff,inset 0 0 0 7px var(--cert-teal),0 12px 28px rgb(27 42 55 / 12%); }
+  .certificate { --cert-ink:#1b2a37; --cert-muted:#5b6d79; --cert-blue:#245d91; --cert-teal:#278b8f; --cert-gold:#be8f2c; position:relative; isolation:isolate; container-type:inline-size; display:block; width:100%; min-width:0; aspect-ratio:842 / 595; margin:24px 0; padding:0; overflow:hidden; color:var(--cert-ink); background:linear-gradient(135deg,#f8fbfd 0%,#edf6f8 58%,#e7f4f2 100%); border:2px solid var(--cert-blue); box-shadow:inset 0 0 0 5px #fff,inset 0 0 0 7px var(--cert-teal),0 12px 28px rgb(27 42 55 / 12%); }
   .certificate::before,.certificate::after { content:""; position:absolute; z-index:-1; width:25%; aspect-ratio:1; background:rgb(39 139 143 / 10%); transform:rotate(45deg); }
   .certificate::before { top:-22%; left:-13%; }
   .certificate::after { right:-12%; bottom:-23%; background:rgb(36 93 145 / 8%); }
-  .cert-main { display:flex; min-width:0; flex-direction:column; align-items:center; text-align:center; }
-  .cert-brand { align-self:stretch; display:flex; gap:8px; align-items:center; font-size:clamp(.65rem, 1.4vw, .9rem); font-weight:700; text-align:left; }
-  .cert-brand img { width:clamp(28px, 5vw, 46px); height:auto; border-radius:5px; }
+  .cert-main { position:absolute; inset:0; display:block; min-width:0; text-align:center; }
+  .cert-main::before { content:""; position:absolute; top:20.8%; right:7.6%; left:7.6%; border-top:1px solid #c6d7de; }
+  .cert-brand { position:absolute; top:8%; left:7%; display:flex; gap:1.2%; align-items:center; font-size:clamp(7px, 1.5cqw, 13px); font-weight:700; text-align:left; }
+  .cert-brand img { width:7.4cqw; min-width:24px; max-width:62px; height:auto; border-radius:5px; }
   .cert-brand small { display:block; color:var(--cert-muted); font-weight:400; font-size:.72em; }
-  .office-marks { position:absolute; top:clamp(14px, 3vw, 28px); right:clamp(14px, 3vw, 28px); display:flex; gap:5px; }
-  .office-marks span { display:grid; width:clamp(20px, 3.4vw, 29px); aspect-ratio:1; place-items:center; border-radius:5px; color:#fff; font:700 clamp(11px, 2vw, 16px)/1 Arial,sans-serif; }
+  .office-marks { position:absolute; top:9.7%; right:8%; display:flex; gap:1.1cqw; }
+  .office-marks span { display:grid; width:clamp(12px, 3.2cqw, 27px); aspect-ratio:1; place-items:center; border-radius:5px; color:#fff; font:700 clamp(8px, 1.8cqw, 15px)/1 Arial,sans-serif; }
   .office-marks span:nth-child(1){background:#2b579a}.office-marks span:nth-child(2){background:#1e6b41}.office-marks span:nth-child(3){background:#b7391a}
-  .cert-title { margin:auto 0 0; color:var(--cert-blue); font-size:clamp(1rem, 3.5vw, 2rem); line-height:1.1; }
-  .cert-intro { margin:clamp(4px, 1.2vw, 12px) 0 0; color:var(--cert-muted); font-size:clamp(.62rem, 1.6vw, .95rem); }
-  .cert-name { width:100%; margin:clamp(3px, 1vw, 10px) 0 0; overflow-wrap:anywhere; font-size:clamp(1.1rem, 4.8vw, 2.8rem); line-height:1.05; }
-  .cert-assessment { margin:clamp(4px, 1.2vw, 12px) 0 0; font-size:clamp(.6rem, 1.7vw, 1rem); }
-  .cert-score { margin:clamp(4px, 1vw, 10px) 0 0; padding:4px 14px; border:1px solid #b9ded8; border-radius:999px; background:#e3f4f1; font:700 clamp(.62rem, 1.8vw, 1rem)/1.3 Arial,sans-serif; }
-  .cert-date { margin:clamp(4px, 1vw, 10px) 0 0; color:var(--cert-muted); font-size:clamp(.55rem, 1.4vw, .82rem); }
-  .cert-side { display:flex; min-width:62px; flex-direction:column; align-items:center; justify-content:flex-end; gap:clamp(5px, 1.5vw, 13px); padding-top:clamp(45px, 9vw, 76px); text-align:center; }
-  .cert-seal { display:grid; width:clamp(52px, 11vw, 88px); aspect-ratio:1; place-content:center; border:2px double var(--cert-gold); border-radius:50%; background:#faf2d9; color:#775314; font:700 clamp(.39rem, 1.05vw, .65rem)/1.4 Arial,sans-serif; }
+  .cert-title { position:absolute; top:25%; left:8%; width:84%; margin:0; transform:translateY(-50%); color:var(--cert-blue); font-size:clamp(12px, 3.7cqw, 31px); line-height:1.1; }
+  .cert-intro { position:absolute; top:35.5%; left:10%; width:80%; margin:0; transform:translateY(-50%); color:var(--cert-muted); font-size:clamp(8px, 1.7cqw, 14px); }
+  .cert-name { position:absolute; top:43.7%; left:8%; width:84%; margin:0; transform:translateY(-50%); overflow-wrap:anywhere; font-size:clamp(15px, 5cqw, 42px); line-height:1.05; }
+  .cert-assessment { position:absolute; top:49.4%; left:8%; width:84%; margin:0; transform:translateY(-50%); font-size:clamp(6px, 1.8cqw, 15px); }
+  .cert-score { position:absolute; top:51.6%; left:50%; display:flex; width:18%; min-width:76px; height:7.2%; flex-direction:column; align-items:center; justify-content:center; gap:1px; margin:0; padding:2px; transform:translateX(-50%); border:1px solid #b9ded8; border-radius:10px; background:#e3f4f1; font:700 clamp(6px, 1.2cqw, 10px)/1.2 Arial,sans-serif; }
+  .cert-score strong { color:var(--cert-ink); font-size:1.9em; line-height:1; }
+  .cert-date { position:absolute; top:63.5%; left:8%; width:84%; margin:0; transform:translateY(-50%); color:var(--cert-muted); font-size:clamp(7px, 1.4cqw, 12px); }
+  .cert-side { position:absolute; top:70%; right:7.6%; bottom:6%; left:7.6%; display:block; padding-top:0; border-top:1px solid #c6d7de; text-align:center; }
+  .cert-seal { position:absolute; right:0; bottom:0; display:grid; width:10.3%; aspect-ratio:1; place-content:center; border:2px double var(--cert-gold); border-radius:50%; background:#faf2d9; color:#775314; font:700 clamp(5px, .9cqw, 8px)/1.3 Arial,sans-serif; }
   .cert-seal span:first-child::before,.cert-seal span:last-child::after { content:"★"; display:block; font-size:1.15em; }
-  .cert-qr { width:clamp(48px, 9vw, 76px); aspect-ratio:1; padding:3px; background:#fff; }
-  .cert-id-label { margin:0; color:var(--cert-muted); font:700 clamp(.42rem, 1vw, .62rem)/1.2 Arial,sans-serif; }
-  .cert-id { max-width:100%; margin:2px 0 0; overflow-wrap:anywhere; font:700 clamp(.42rem, 1vw, .65rem)/1.2 ui-monospace,Menlo,Consolas,monospace; }
-  .cert-issuer { width:100%; padding-top:clamp(4px, 1vw, 10px); border-top:1px solid var(--cert-teal); font-size:clamp(.5rem, 1.2vw, .75rem); font-weight:700; }
+  .cert-qr-wrap { position:absolute; bottom:0; left:0; display:flex; width:11.2%; flex-direction:column; align-items:center; gap:2px; }
+  .cert-qr { display:block; width:100%; aspect-ratio:1; padding:3px; background:#fff; }
+  .cert-scan { color:var(--cert-muted); font:700 clamp(5px, .8cqw, 7px)/1.1 Arial,sans-serif; }
+  .cert-id-block { position:absolute; bottom:5%; left:15%; width:35%; text-align:left; }
+  .cert-id-label { margin:0; color:var(--cert-muted); font:400 clamp(6px, 1.1cqw, 9px)/1.2 Arial,sans-serif; }
+  .cert-id { max-width:100%; margin:2px 0 0; overflow-wrap:anywhere; font:700 clamp(7px, 1.5cqw, 13px)/1.2 ui-monospace,Menlo,Consolas,monospace; }
+  .cert-link { display:inline-block; margin-top:3px; color:var(--cert-blue); font:400 clamp(5px, 1cqw, 9px)/1.2 Arial,sans-serif; text-decoration:none; }
+  .cert-issuer { position:absolute; bottom:5%; left:58%; width:20%; padding-top:2%; border-top:1px solid var(--cert-teal); font-size:clamp(7px, 1.5cqw, 13px); font-weight:700; }
   .cert-issuer small { display:block; color:var(--cert-muted); font-size:.8em; font-weight:400; }
   .result-success { color:#17613b; }
   @media (max-width:480px) {
-    main { padding:20px 12px 48px; }
     #intro,#exam,#result { border-radius:12px; }
-    .certificate { aspect-ratio:auto; min-height:240px; }
-    .cert-side { gap:4px; padding-top:0; }
-    .cert-seal { width:46px; }
-    .cert-qr { width:42px; }
-    .cert-id-label,.cert-id { font-size:6px; }
-    .cert-issuer { font-size:7px; }
+    main { padding:20px 12px 48px; }
+    .cert-brand img { min-width:18px; }
+    .cert-score { width:auto; min-width:0; height:auto; flex-direction:row; gap:4px; padding:2px 5px; border-radius:5px; }
+    .cert-score strong { font-size:1.2em; }
   }
   @media (prefers-reduced-motion:reduce) { button { transition:none; } button:not(:disabled):hover { transform:none; } }
   @media print {
@@ -120,14 +123,21 @@
         <p class="cert-intro">This certifies that</p>
         <h3 id="cert-name" class="cert-name"></h3>
         <p class="cert-assessment">passed the Microsoft Office Online Assessment</p>
-        <p id="cert-score" class="cert-score"></p>
+        <p id="cert-score" class="cert-score"><span>ASSESSMENT SCORE</span><strong id="cert-score-value"></strong></p>
         <p id="cert-date" class="cert-date"></p>
       </div>
       <div class="office-marks" aria-hidden="true"><span>W</span><span>X</span><span>P</span></div>
       <aside class="cert-side">
         <div class="cert-seal" aria-label="Assessment passed"><span>ASSESSMENT</span><span>PASSED</span></div>
-        <img id="cert-qr" class="cert-qr" alt="QR code to verify this certificate">
-        <div><p class="cert-id-label">CERTIFICATE ID</p><p id="cert-id" class="cert-id"></p></div>
+        <div class="cert-qr-wrap">
+          <img id="cert-qr" class="cert-qr" alt="QR code to verify this certificate">
+          <span class="cert-scan">SCAN TO VERIFY</span>
+        </div>
+        <div class="cert-id-block">
+          <p class="cert-id-label">Certificate ID</p>
+          <p id="cert-id" class="cert-id"></p>
+          <a id="cert-link" class="cert-link">Open certificate verification</a>
+        </div>
         <div class="cert-issuer">Dabik Technologies<small>Assessment Issuer</small></div>
       </aside>
     </article>
@@ -199,11 +209,12 @@ async function submit() {
     $("msg").classList.add("result-success");
     $("sub").textContent = "Your certificate is ready. Save a PDF copy or use its QR code to verify it later.";
     $("cert-name").textContent = d.name;
-    $("cert-score").textContent = "ASSESSMENT SCORE · " + d.score + "%";
+    $("cert-score-value").textContent = d.score + "%";
     $("cert-date").textContent = "Issued " + formatIssuedDate(d.date) + " by Dabik Technologies";
     $("cert-id").textContent = d.id;
     const url = location.origin + "/verify/" + d.cert;
     $("cert-qr").src = createQrDataUrl(url);
+    $("cert-link").href = url;
     $("certificate").classList.remove("hidden");
     $("download").classList.remove("hidden");
     $("download").onclick = () => makePdf(d).catch((error) => {
